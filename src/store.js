@@ -4,6 +4,10 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
+        globalCardIdRegistry: 0,
+        testCards: [{
+            text: "someText"
+        }]
     },
     getters: {
 
