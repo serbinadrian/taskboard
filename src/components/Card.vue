@@ -1,8 +1,5 @@
 <template>
   <div class="card-holder">
-    <div class="task-card-control" v-if="cardCategory === 'ToDo'">
-      1
-    </div>
     <div class="card-content">
       {{text}}
     </div>

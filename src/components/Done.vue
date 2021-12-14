@@ -5,7 +5,24 @@
     </div>
     <div class="task-cards-list">
 
-      <div v-for="card in testCards" class="card">
+      <div v-for="card in doneCards" class="card">
+        <div class="task-card-control">
+          <div class="task-card-control-item toInProgress" @click="transferCardToInProgress(card.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 400.004 400.004">
+              <path d="M382.688,182.686H59.116l77.209-77.214c6.764-6.76,6.764-17.726,0-24.485c-6.764-6.764-17.73-6.764-24.484,0L5.073,187.757
+               c-6.764,6.76-6.764,17.727,0,24.485l106.768,106.775c3.381,3.383,7.812,5.072,12.242,5.072c4.43,0,8.861-1.689,12.242-5.072
+                c6.764-6.76,6.764-17.726,0-24.484l-77.209-77.218h323.572c9.562,0,17.316-7.753,17.316-17.315
+                C400.004,190.438,392.251,182.686,382.688,182.686z"/>
+            </svg>
+          </div>
+          <div class="task-card-control-item delete" @click="ejectDoneCardById(card.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M 10 2 L 9 3 L 5 3 C 4.448 3 4 3.448 4 4 C 4 4.552 4.448 5 5 5 L 7 5 L 17 5 L 19
+              5 C 19.552 5 20 4.552 20 4 C 20 3.448 19.552 3 19 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C
+              5 21.105 5.895 22 7 22 L 17 22 C 18.105 22 19 21.105 19 20 L 19 7 L 5 7 z"/>
+            </svg>
+          </div>
+        </div>
         <Card :id="card.id" :text="card.text"/>
       </div>
 
@@ -15,18 +32,26 @@
 
 <script>
 import Card from './Card.vue';
-import {mapState} from 'vuex';
+import {mapMutations, mapState} from 'vuex';
+
 export default {
   name: "Done",
   props: {
     category: String
   },
   computed: {
-    ...mapState(['testCards'])
+    ...mapState(['doneCards', 'globalCardIdRegistry', 'lastCard'])
   },
   data() {
     return {
       loadedCards: {}
+    }
+  },
+  methods: {
+    ...mapMutations(['incrementGlobalCardId', 'ejectDoneCardById', 'addInProgressCard']),
+    transferCardToInProgress(id) {
+      this.ejectDoneCardById(id);
+      this.addInProgressCard(this.lastCard);
     }
   },
   components: {
@@ -39,12 +64,12 @@ export default {
 <style>
 
 .task-cards-holder {
-  width: 100%;
+  width: 400px;
   height: 100%;
 }
 
 .task-cards-header {
-  width: var(--default-card-width);
+  width: 100%;
   margin: 20px auto 0;
 }
 
