@@ -17,6 +17,8 @@ import ToDo from './ToDo.vue';
 import InProgress from './InProgress.vue';
 import Done from './Done.vue';
 
+import {mapActions} from 'vuex'
+
 export default {
   name: "Board",
   components: {
@@ -29,6 +31,12 @@ export default {
     return {
       cardCategories: ['ToDo', 'Doing', 'Done']
     }
+  },
+  created(){
+    this.loadAllCards();
+  },
+  methods: {
+    ...mapActions(['loadAllCards'])
   }
 }
 </script>

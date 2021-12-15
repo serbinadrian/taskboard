@@ -15,7 +15,7 @@
                 C400.004,190.438,392.251,182.686,382.688,182.686z"/>
             </svg>
           </div>
-          <div class="task-card-control-item delete" @click="ejectDoneCardById(card.id)">
+          <div class="task-card-control-item delete" @click="deleteCard(card.id), ejectDoneCardById(card.id)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M 10 2 L 9 3 L 5 3 C 4.448 3 4 3.448 4 4 C 4 4.552 4.448 5 5 5 L 7 5 L 17 5 L 19
               5 C 19.552 5 20 4.552 20 4 C 20 3.448 19.552 3 19 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C
@@ -32,7 +32,7 @@
 
 <script>
 import Card from './Card.vue';
-import {mapMutations, mapState} from 'vuex';
+import {mapActions, mapMutations, mapState, mapGetters} from 'vuex';
 
 export default {
   name: "Done",
@@ -42,15 +42,23 @@ export default {
   computed: {
     ...mapState(['doneCards', 'globalCardIdRegistry', 'lastCard'])
   },
+  created(){
+    this.getDoneCards();
+  },
   data() {
     return {
       loadedCards: {}
     }
   },
   methods: {
+    ...mapActions(['changeCardList', 'deleteCard']),
+    ...mapGetters(['getDoneCards']),
     ...mapMutations(['incrementGlobalCardId', 'ejectDoneCardById', 'addInProgressCard']),
     transferCardToInProgress(id) {
       this.ejectDoneCardById(id);
+
+      this.changeCardList(this.lastCard, "InProgress"); //to server
+
       this.addInProgressCard(this.lastCard);
     }
   },

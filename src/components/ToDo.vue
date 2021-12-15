@@ -19,7 +19,7 @@
 
       <div v-for="card in toDoCards" class="card">
         <div class="task-card-control">
-          <div class="task-card-control-item delete" @click="ejectToDoCardById(card.id)">
+          <div class="task-card-control-item delete" @click="deleteCard(card.id), ejectToDoCardById(card.id)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M 10 2 L 9 3 L 5 3 C 4.448 3 4 3.448 4 4 C 4 4.552 4.448 5 5 5 L 7 5 L 17 5 L 19
               5 C 19.552 5 20 4.552 20 4 C 20 3.448 19.552 3 19 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C
@@ -44,7 +44,7 @@
 
 <script>
 import Card from './Card.vue';
-import {mapState, mapMutations} from 'vuex';
+import {mapState, mapMutations, mapGetters, mapActions} from 'vuex';
 
 export default {
   name: "ToDo",
@@ -53,6 +53,9 @@ export default {
   },
   computed: {
     ...mapState(['toDoCards', 'globalCardIdRegistry', 'lastCard'])
+  },
+  created(){
+    this.getToDoCards();
   },
   data() {
     return {
@@ -64,12 +67,16 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['createCard', 'changeCardList', 'deleteCard']),
+    ...mapGetters(['getToDoCards']),
     ...mapMutations(['addToDoCard', 'incrementGlobalCardId', 'ejectToDoCardById', 'addInProgressCard']),
     addCard() {
       this.incrementGlobalCardId();
-      console.log(this.globalCardIdRegistry);
       this.currentCard.id = this.globalCardIdRegistry;
       this.addToDoCard(this.currentCard);
+
+      this.createCard(this.currentCard); //to server
+
       this.clearCurrentCard();
     },
     clearCurrentCard() {
@@ -78,6 +85,9 @@ export default {
     },
     transferCardToInProgress(id) {
       this.ejectToDoCardById(id);
+
+      this.changeCardList(this.lastCard, "InProgress"); //to server
+
       this.addInProgressCard(this.lastCard);
     }
   },

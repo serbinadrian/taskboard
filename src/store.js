@@ -6,6 +6,8 @@ const store = new Vuex.Store({
     state: {
         globalCardIdRegistry: 3,
 
+        allCards: {},
+
         toDoCards: [{
             id: 1,
             text: "someText"
@@ -22,7 +24,19 @@ const store = new Vuex.Store({
         lastCard: {}
     },
     getters: {
-
+        getToDoCards(){
+            //from all cards get todos
+            //copy with Object.assign
+            console.log('got toDos');
+        },
+        getInProgressCards(){
+            //from all cards get todos
+            //copy with Object.assign
+            console.log('got InProgress');
+        },
+        getDoneCards(){
+            console.log('got Dones');
+        }
     },
     mutations: {
         incrementGlobalCardId(state){
@@ -65,6 +79,22 @@ const store = new Vuex.Store({
             }
         }
     },
-    actions: {}
+    actions: {
+        // id | name | content| imgcontent | list |
+        createCard(card){
+            let cardToSend = Object.assign({}, card);
+            console.log('card with text' + card.text + 'created');
+        },
+        deleteCard(id){
+            console.log('card with id' + id + 'deleted');
+        },
+        changeCardList(card, list){
+            console.log('card with text' + card.text + 'migrated to' + list);
+        },
+        loadAllCards(state){
+            console.log('allCards are loaded');
+            //load here 'state.allCards'
+        }
+    }
 });
 export default store;
