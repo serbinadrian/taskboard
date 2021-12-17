@@ -86,7 +86,10 @@ export default {
     transferCardToInProgress(id) {
       this.ejectToDoCardById(id);
 
-      this.changeCardList(this.lastCard, "InProgress"); //to server
+      //TODO Maybe more pretty will be using external method
+      this.lastCard.list = 1;
+
+      this.changeCardList(this.lastCard); //to server
 
       this.addInProgressCard(this.lastCard);
     }

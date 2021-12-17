@@ -63,14 +63,20 @@ export default {
     transferCardToToDo(id){
       this.ejectInProgressCardById(id);
 
-      this.changeCardList(this.lastCard, "ToDo"); //to server
+      //TODO Maybe more pretty will be using external method
+      this.lastCard.list = 0;
+
+      this.changeCardList(this.lastCard); //to server
 
       this.addToDoCard(this.lastCard);
     },
     transferCardToDone(id){
       this.ejectInProgressCardById(id);
 
-      this.changeCardList(this.lastCard, "Done"); //to server
+      //TODO Maybe more pretty will be using external method
+      this.lastCard.list = 2;
+
+      this.changeCardList(this.lastCard); //to server
 
       this.addDoneCard(this.lastCard);
     },
