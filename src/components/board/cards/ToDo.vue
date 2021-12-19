@@ -3,7 +3,7 @@
     <div class="task-cards-header">
       {{ category }}
       <div class="add-new-card" @click="isAddNewCard = !isAddNewCard">
-        <svg viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" :class="{'cancel': isAddNewCard}">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" :class="{'cancel': isAddNewCard}">
           <circle cx="40" cy="40" r="35" fill="none" stroke-width="3px"/>
           <line x1="20" y1="40" x2="60" y2="40" stroke-width="3px"/>
           <line x1="40" y1="60" x2="40" y2="20" stroke-width="3px"/>
@@ -11,15 +11,13 @@
       </div>
     </div>
     <div class="task-cards-list">
-
       <div class="add-new-card-edit-panel" v-show="isAddNewCard">
         <input type="text" v-model="currentCard.text">
         <button @click="isAddNewCard = !isAddNewCard; addCard()">submit</button>
       </div>
-
       <div v-for="card in toDoCards" class="card">
         <div class="task-card-control">
-          <div class="task-card-control-item delete" @click="deleteCard(card.id), ejectToDoCardById(card.id)">
+          <div class="task-card-control-item delete" @click="deleteCard(card.id); ejectToDoCardById(card.id)">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M 10 2 L 9 3 L 5 3 C 4.448 3 4 3.448 4 4 C 4 4.552 4.448 5 5 5 L 7 5 L 17 5 L 19
               5 C 19.552 5 20 4.552 20 4 C 20 3.448 19.552 3 19 3 L 15 3 L 14 2 L 10 2 z M 5 7 L 5 20 C
@@ -36,15 +34,13 @@
         </div>
         <Card :id="card.id" :text="card.text"/>
       </div>
-
-
     </div>
   </div>
 </template>
 
 <script>
-import Card from './Card.vue';
-import {mapState, mapMutations, mapGetters, mapActions} from 'vuex';
+import Card from './card/Card.vue';
+import {mapState, mapMutations, mapActions} from 'vuex';
 
 export default {
   name: "ToDo",
@@ -53,9 +49,6 @@ export default {
   },
   computed: {
     ...mapState(['toDoCards', 'globalCardIdRegistry', 'lastCard'])
-  },
-  created(){
-    this.getToDoCards();
   },
   data() {
     return {
@@ -68,15 +61,12 @@ export default {
   },
   methods: {
     ...mapActions(['createCard', 'changeCardList', 'deleteCard']),
-    ...mapGetters(['getToDoCards']),
     ...mapMutations(['addToDoCard', 'incrementGlobalCardId', 'ejectToDoCardById', 'addInProgressCard']),
     addCard() {
       this.incrementGlobalCardId();
       this.currentCard.id = this.globalCardIdRegistry;
       this.addToDoCard(this.currentCard);
-
       this.createCard(this.currentCard); //to server
-
       this.clearCurrentCard();
     },
     clearCurrentCard() {
@@ -85,27 +75,21 @@ export default {
     },
     transferCardToInProgress(id) {
       this.ejectToDoCardById(id);
-
-      //TODO Maybe more pretty will be using external method
-      this.lastCard.list = 1;
-
-      this.changeCardList(this.lastCard); //to server
-
+      this.changeCardList(this.lastCard, 1); //to server
       this.addInProgressCard(this.lastCard);
     }
   },
   components: {
     Card
   }
-
 }
 </script>
 
-<style>
-
+<style scoped>
 .task-cards-holder {
   width: 400px;
   height: 100%;
+  margin: 0 auto;
 }
 
 .task-cards-header {
@@ -191,5 +175,4 @@ export default {
   transform: rotate(45deg) !important;
   transition: 0s !important;
 }
-
 </style>

@@ -9,9 +9,21 @@ const jsonResponse = (response) => {
 
 const store = new Vuex.Store({
     state: {
+        backendPort: 4001,
+        isSignedIn: false,
         globalCardIdRegistry: -1,
-
-        allCards: [],
+        currentHomeComponent: 'SignIn',
+        currentUser: {
+            username: '',
+            email: ''
+        },
+        boards: [
+            {
+                id: -1,
+                name: 'default',
+                owner: 'none'
+            }
+        ],
 
         toDoCards: [],
         inProgressCards: [],
@@ -19,22 +31,12 @@ const store = new Vuex.Store({
 
         lastCard: {}
     },
-    getters: {
-        getToDoCards() {
-            //from all cards get todos
-            //copy with Object.assign
-            console.log('got toDos');
-        },
-        getInProgressCards() {
-            //from all cards get todos
-            //copy with Object.assign
-            console.log('got InProgress');
-        },
-        getDoneCards() {
-            console.log('got Dones');
-        }
-    },
     mutations: {
+        /*nav*/
+        setCurrentHomeComponent(state, component) {
+            state.currentHomeComponent = component;
+        },
+        /*card*/
         incrementGlobalCardId(state) {
             state.globalCardIdRegistry++;
         },
@@ -76,11 +78,10 @@ const store = new Vuex.Store({
         }
     },
     actions: {
-        // id | name | content| imgcontent | list |
         createCard(state, card) {
             const cardToSend = Object.assign({}, card);
 
-            fetch('http://localhost:4001/api/cards', {
+            fetch('http://localhost:' + state.backendPort + '/api/cards', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -95,7 +96,7 @@ const store = new Vuex.Store({
                 .catch(console.error);
         },
         deleteCard(state, id) {
-            fetch('http://localhost:4001/api/cards', {
+            fetch('http://localhost:' + state.backendPort + '/api/cards', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'
@@ -109,8 +110,9 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        changeCardList(state, card) {
-            fetch('http://localhost:4001/api/card/change-list', {
+        changeCardList(state, card, list) {
+            card.list = list;
+            fetch('http://localhost:' + state.backendPort + '/api/card/change-list', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -124,34 +126,53 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        loadAllCards() {
-            fetch('http://localhost:4001/api/cards')
+        loadAllCards(state) {
+            fetch('http://localhost:' + state.backendPort + '/api/cards')
                 .then(jsonResponse)
                 .then(result => {
                     Array.from(result).forEach(card => {
                         switch (card.list) {
                             case 0: {
-                                this.state.toDoCards.push(card);
+                                state.toDoCards.push(card);
                                 break;
                             }
-
                             case 1: {
-                                this.state.inProgressCards.push(card);
+                                state.inProgressCards.push(card);
                                 break;
                             }
-
                             case 2: {
-                                this.state.doneCards.push(card);
+                                state.doneCards.push(card);
                                 break;
                             }
                         }
-
-                        if (card.id > this.state.globalCardIdRegistry) this.state.globalCardIdRegistry = card.id;
+                        if (card.id > state.globalCardIdRegistry) state.globalCardIdRegistry = card.id;
                     });
 
                     console.log('allCards are loaded');
                 })
                 .catch(console.error)
+        },
+        /*auth*/
+        signIn(credentials) {
+            /*TODO sign in
+            * credentials: {
+            *   login: 'some login',
+            *   password 'some password'
+            * }
+            * */
+            /*TODO update store.currentUser on sign in */
+            this.state.isSignedIn = true;
+            this.state.currentHomeComponent = 'Board';
+        },
+        signUp(credentials) {
+            /*TODO sign up
+            * credentials: {
+            *   login: '',
+            *   email: '',
+            *   password: '',
+            *   rpassword: ''
+            * }
+            * */
         }
     }
 });

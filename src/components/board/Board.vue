@@ -13,9 +13,9 @@
 
 <script>
 import BoardHeader from './BoardHeader.vue';
-import ToDo from './ToDo.vue';
-import InProgress from './InProgress.vue';
-import Done from './Done.vue';
+import ToDo from './cards/ToDo.vue';
+import InProgress from './cards/InProgress.vue';
+import Done from './cards/Done.vue';
 
 import {mapActions} from 'vuex'
 
@@ -58,8 +58,6 @@ export default {
 .task-cards {
   font-size: 1.875rem;
   color: var(--default-card-title-color);
-
-  //width: var(--card-holder-width-default);
   margin: 0 auto;
   width: 100%;
   display: -webkit-flex;
@@ -69,4 +67,7 @@ export default {
   justify-content: center;
 
 }
+
+
+
 </style>

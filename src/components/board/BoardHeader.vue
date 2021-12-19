@@ -13,13 +13,13 @@
     </div>
     <div class="enrolled-users-holder">
       <div class="enrolled-user">
-        <img src="../../resources/img/render/logo.png" alt=""/>
+        <img src="../../../resources/img/render/logo.png" alt=""/>
       </div>
       <div class="enrolled-user">
-        <img src="../../resources/img/render/logo-two.png" alt=""/>
+        <img src="../../../resources/img/render/logo-two.png" alt=""/>
       </div>
       <div class="enrolled-user">
-        <img src="../../resources/img/render/logo.png" alt=""/>
+        <img src="../../../resources/img/render/logo.png" alt=""/>
       </div>
     </div>
   </div>

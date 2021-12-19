@@ -1,22 +1,27 @@
 <template>
   <div class="main">
     <Navbar/>
-    <Board/>
+    <component :is="currentHomeComponent"></component>
   </div>
 </template>
 
 <script>
-import Navbar from './Navbar.vue'
-import Board from './Board.vue'
+import Navbar from './navbar/Navbar.vue'
+import Board from './board/Board.vue'
+import SignIn from './authentication/SignIn.vue'
+import SignUp from './authentication/SignUp.vue'
+import {mapState} from 'vuex'
 export default {
   data() {
     return {};
   },
   methods: {},
   computed: {
-
+    ...mapState(['isSignedIn', 'currentHomeComponent'])
   },
   components: {
+    SignIn,
+    SignUp,
     Navbar,
     Board
   }
