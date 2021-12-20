@@ -11,30 +11,61 @@ const store = new Vuex.Store({
     state: {
         backendPort: 4001,
         isSignedIn: false,
+
         globalCardIdRegistry: -1,
+        globalBoardIdRegistry: -1,
+
         currentHomeComponent: 'SignIn',
+
         currentUser: {
+            id: -1,
             username: '',
             email: ''
         },
-        boards: [
-            {
-                id: -1,
-                name: 'default',
-                owner: 'none'
-            }
-        ],
+        currentBoard:{
+          id: -1,
+          name: '',
+          owner: ''
+        },
+
+        boards: [],
 
         toDoCards: [],
         inProgressCards: [],
         doneCards: [],
 
+        /*recycle*/
+        lastBoard: {},
         lastCard: {}
     },
     mutations: {
         /*nav*/
         setCurrentHomeComponent(state, component) {
             state.currentHomeComponent = component;
+        },
+        /*board*/
+        incrementGlobalBoardId(state) {
+            state.globalBoardIdRegistry++;
+        },
+        addBoard(state, board) {
+          let boardToPush = Object.assign({}, board);
+          state.boards.push(boardToPush);
+        },
+        ejectBoardById(state, id) {
+            for (let i = 0; i < state.boards.length; i++) {
+                if (state.boards[i].id === id) {
+                    state.lastBoard = state.boards[i];
+                    state.boards.splice(i, 1);
+                }
+            }
+        },
+        openSelectedBoardById(state, id) {
+            for (let i = 0; i < state.boards.length; i++) {
+                if (state.boards[i].id === id) {
+                    state.currentBoard = Object.assign({}, state.boards[i]);
+                    break;
+                }
+            }
         },
         /*card*/
         incrementGlobalCardId(state) {
@@ -75,7 +106,8 @@ const store = new Vuex.Store({
                     state.doneCards.splice(i, 1);
                 }
             }
-        }
+        },
+
     },
     actions: {
         createCard(state, card) {
@@ -126,31 +158,41 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        loadAllCards(state) {
+        loadAllCards(state, boardId) { //TODO update method with board id
             fetch('http://localhost:' + state.backendPort + '/api/cards')
                 .then(jsonResponse)
                 .then(result => {
                     Array.from(result).forEach(card => {
                         switch (card.list) {
                             case 0: {
-                                state.toDoCards.push(card);
+                                this.state.toDoCards.push(card);
                                 break;
                             }
                             case 1: {
-                                state.inProgressCards.push(card);
+                                this.state.inProgressCards.push(card);
                                 break;
                             }
                             case 2: {
-                                state.doneCards.push(card);
+                                this.state.doneCards.push(card);
                                 break;
                             }
                         }
-                        if (card.id > state.globalCardIdRegistry) state.globalCardIdRegistry = card.id;
+                        if (card.id > this.state.globalCardIdRegistry) this.state.globalCardIdRegistry = card.id;
                     });
 
                     console.log('allCards are loaded');
                 })
                 .catch(console.error)
+        },
+        /*boards*/
+        loadBoards(state){
+
+        },
+        createBoard(state, board) {
+
+        },
+        deleteBoard(state, id) {
+
         },
         /*auth*/
         signIn(credentials) {
@@ -162,7 +204,7 @@ const store = new Vuex.Store({
             * */
             /*TODO update store.currentUser on sign in */
             this.state.isSignedIn = true;
-            this.state.currentHomeComponent = 'Board';
+            this.state.currentHomeComponent = 'Boards';
         },
         signUp(credentials) {
             /*TODO sign up

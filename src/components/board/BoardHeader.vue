@@ -1,11 +1,11 @@
 <template>
   <div class="board-header">
     <div class="board-header-icon-holder current-board-name">
-      Board name
+      {{currentBoard.name}}
     </div>
     <div class="vertical-delimiter"></div>
     <div class="board-header-icon-holder workspace-owner">
-      Whose workspace
+      {{currentBoard.owner}}'s workspace
     </div>
     <div class="vertical-delimiter"></div>
     <div class="board-header-icon-holder invite-to-workspace">
@@ -26,8 +26,13 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
-  name: "BoardHeader"
+  name: "BoardHeader",
+  computed: {
+    ...mapState(['currentBoard'])
+  }
 }
 </script>
 

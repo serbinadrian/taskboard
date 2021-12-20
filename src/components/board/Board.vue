@@ -33,7 +33,7 @@ export default {
     }
   },
   created(){
-    this.loadAllCards();
+    //this.loadAllCards();
   },
   methods: {
     ...mapActions(['loadAllCards'])

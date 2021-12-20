@@ -7,13 +7,17 @@
 
 <script>
 import Navbar from './navbar/Navbar.vue'
+import Boards from './boards/Boards';
 import Board from './board/Board.vue'
 import SignIn from './authentication/SignIn.vue'
 import SignUp from './authentication/SignUp.vue'
-import {mapState} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 export default {
   data() {
     return {};
+  },
+  created() {
+
   },
   methods: {},
   computed: {
@@ -23,7 +27,8 @@ export default {
     SignIn,
     SignUp,
     Navbar,
-    Board
+    Board,
+    Boards
   }
 };
 </script>
