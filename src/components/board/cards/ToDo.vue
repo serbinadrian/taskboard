@@ -1,5 +1,11 @@
 <template>
   <div class="task-cards-holder">
+    <AddItem v-on:add="addCard($event)"
+             v-on:close="isAddNewCard = !isAddNewCard"
+             v-if="isAddNewCard"
+             :displayedTitle="'Add To Do'"
+             :displayed-placeholder="'Type card content'"
+    />
     <div class="task-cards-header">
       {{ category }}
       <div class="add-new-card" @click="isAddNewCard = !isAddNewCard">
@@ -11,10 +17,6 @@
       </div>
     </div>
     <div class="task-cards-list">
-      <div class="add-new-card-edit-panel" v-show="isAddNewCard">
-        <input type="text" v-model="currentCard.text">
-        <button @click="isAddNewCard = !isAddNewCard; addCard()">submit</button>
-      </div>
       <div v-for="card in toDoCards" class="card">
         <div class="task-card-control">
           <div class="task-card-control-item delete" @click="deleteCard(card.id); ejectToDoCardById(card.id)">
@@ -40,6 +42,7 @@
 
 <script>
 import Card from './card/Card.vue';
+import AddItem from './../../addItem/AddItem';
 import {mapState, mapMutations, mapActions} from 'vuex';
 
 export default {
@@ -62,8 +65,10 @@ export default {
   methods: {
     ...mapActions(['createCard', 'changeCardList', 'deleteCard']),
     ...mapMutations(['addToDoCard', 'incrementGlobalCardId', 'ejectToDoCardById', 'addInProgressCard']),
-    addCard() {
+    addCard(text) {
+
       this.incrementGlobalCardId();
+      this.currentCard.text = text;
       this.currentCard.id = this.globalCardIdRegistry;
       this.addToDoCard(this.currentCard);
       this.createCard(this.currentCard); //to server
@@ -80,7 +85,8 @@ export default {
     }
   },
   components: {
-    Card
+    Card,
+    AddItem
   }
 }
 </script>
@@ -115,13 +121,13 @@ export default {
 }
 
 .add-new-card svg {
-  stroke: black;
+  stroke: #515253;
   width: 100%;
   height: 100%;
 }
 
 .add-new-card:hover svg {
-  stroke: red;
+  stroke: white;
   transform: rotate(180deg);
   transition: .5s;
 }
@@ -149,7 +155,7 @@ export default {
 }
 
 .task-card-control-item:hover svg {
-  fill: red;
+  fill: #00aaee;
 }
 
 .task-cards-list {
@@ -159,6 +165,7 @@ export default {
 }
 
 .card {
+  padding: 10px;
   background: var(--default-background-card-color);
   min-height: 50px;
   width: var(--default-card-width);

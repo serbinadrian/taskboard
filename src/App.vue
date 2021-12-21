@@ -14,6 +14,11 @@ export default {
 </script>
 
 <style lang="less">
+
+.focused{
+  filter: blur(3px);
+}
+
 * {
   margin: 0;
   padding: 0;

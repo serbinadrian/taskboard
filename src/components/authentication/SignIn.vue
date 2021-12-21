@@ -30,9 +30,6 @@ export default {
       }
     }
   },
-  created() {
-    alert('press log in');
-  },
   methods: {
     ...mapActions(['signIn']),
   }

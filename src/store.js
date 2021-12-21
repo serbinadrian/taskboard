@@ -19,8 +19,8 @@ const store = new Vuex.Store({
 
         currentUser: {
             id: -1,
-            username: '',
-            email: ''
+            username: 'test',
+            email: 'test@mail.com'
         },
         currentBoard:{
           id: -1,
@@ -107,13 +107,24 @@ const store = new Vuex.Store({
                 }
             }
         },
-
+        logout(state) {
+            state.isSignedIn = false;
+            state.currentUser = {};
+            state.boards = [];
+            state.toDoCards = [];
+            state.inProgressCards = [];
+            state.doneCards = [];
+            state.globalBoardIdRegistry = -1;
+            state.globalCardIdRegistry = -1;
+            state.lastCard = {};
+            state.lastBoard =  {};
+        }
     },
     actions: {
-        createCard(state, card) {
+        createCard(card) {
             const cardToSend = Object.assign({}, card);
 
-            fetch('http://localhost:' + state.backendPort + '/api/cards', {
+            fetch('http://localhost:' + this.state.backendPort + '/api/cards', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -127,8 +138,8 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        deleteCard(state, id) {
-            fetch('http://localhost:' + state.backendPort + '/api/cards', {
+        deleteCard(id) {
+            fetch('http://localhost:' + this.state.backendPort + '/api/cards', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'
@@ -142,9 +153,9 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        changeCardList(state, card, list) {
+        changeCardList(card, list) {
             card.list = list;
-            fetch('http://localhost:' + state.backendPort + '/api/card/change-list', {
+            fetch('http://localhost:' + this.state.backendPort + '/api/card/change-list', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -158,8 +169,8 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        loadAllCards(state, boardId) { //TODO update method with board id
-            fetch('http://localhost:' + state.backendPort + '/api/cards')
+        loadAllCards(boardId) { //TODO update method with board id
+            fetch('http://localhost:' + this.state.backendPort + '/api/cards')
                 .then(jsonResponse)
                 .then(result => {
                     Array.from(result).forEach(card => {
@@ -186,12 +197,12 @@ const store = new Vuex.Store({
         },
         /*boards*/
         loadBoards(state){
+            //use this.state.currentUser.id to load
+        },
+        createBoard(board) {
 
         },
-        createBoard(state, board) {
-
-        },
-        deleteBoard(state, id) {
+        deleteBoard(id) {
 
         },
         /*auth*/
@@ -204,6 +215,8 @@ const store = new Vuex.Store({
             * */
             /*TODO update store.currentUser on sign in */
             this.state.isSignedIn = true;
+            this.state.currentUser.username = 'test';
+            this.state.currentUser.email = 'test@mail.com';
             this.state.currentHomeComponent = 'Boards';
         },
         signUp(credentials) {

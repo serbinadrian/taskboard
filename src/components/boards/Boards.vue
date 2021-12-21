@@ -1,16 +1,23 @@
 <template>
   <div class="boards">
-    <AddItem v-on:add="createLocalBoard($event)" v-on:close="isNewBoard = !isNewBoard" v-if="isNewBoard" :displayedTitle="'Add Board'"/>
-    <div class="boards-title">
+    <AddItem v-on:add="createLocalBoard($event)"
+             v-on:close="isNewBoard = !isNewBoard"
+             v-if="isNewBoard"
+             :displayedTitle="'Add Board'"
+             :displayed-placeholder="'Type board name'"
+    />
+    <div class="boards-title" :class="{'focused' : isNewBoard}">
       Your boards
     </div>
-    <div class="wrapper">
-      <div class="message" v-if="!isBoards">
-        <div class="message-content">
-          You currently have no boards...
-        </div>
-        <div class="message-action" @click="isNewBoard = !isNewBoard">
-          create one
+    <div class="wrapper" :class="{'focused' : isNewBoard}">
+      <div class="user-board-add" @click="isNewBoard = !isNewBoard">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="35" fill="none" stroke-width="3px"/>
+          <line x1="20" y1="40" x2="60" y2="40" stroke-width="3px"/>
+          <line x1="40" y1="60" x2="40" y2="20" stroke-width="3px"/>
+        </svg>
+        <div class="user-board-name">
+          Add new board
         </div>
       </div>
       <div class="user-board" v-for="board in boards" @click="openBoard(board.id)">
@@ -47,6 +54,9 @@ export default {
       }
     }
   },
+  created(){
+    //this.loadBoards();
+  },
   computed: {
     ...mapState(['boards', 'currentUser', 'globalBoardIdRegistry'])
   },
@@ -60,7 +70,7 @@ export default {
       alert(data)
     },
     ...mapMutations(['setCurrentHomeComponent', 'openSelectedBoardById', 'incrementGlobalBoardId', 'addBoard', 'ejectBoardById']),
-    ...mapActions(['loadAllCards', 'createBoard', 'deleteBoard']),
+    ...mapActions(['loadAllCards', 'createBoard', 'deleteBoard', 'loadBoards']),
     createLocalBoard(boardName){
       this.incrementGlobalBoardId();
       this.newBoard.id = this.globalBoardIdRegistry;
@@ -96,7 +106,7 @@ export default {
     width: 100%;
     height: calc(100% - 100px);
   }
-
+/*
   .message{
     display: flex;
     flex-wrap: nowrap;
@@ -119,7 +129,7 @@ export default {
   .message-action{
     cursor: pointer;
   }
-
+*/
   .boards-title{
     padding-top: 60px;
     width: 100%;
@@ -128,7 +138,8 @@ export default {
     padding-left: 50px;
   }
   
-  .user-board{
+  .user-board, .user-board-add{
+    text-align: center;
     width: 200px;
     height: 150px;
     padding: 10px;
@@ -138,18 +149,43 @@ export default {
     position: relative;
   }
 
+  .user-board{
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .user-board-add{
+    border: 1px solid black;
+  }
+
   .user-board img{
     width: 100%;
     height: 70%;
   }
 
+  .user-board-add svg{
+    padding: 12px;
+    stroke: #353535;
+    width: 80px;
+    height: 80px;
+  }
+
+  .user-board-add:hover{
+    color: white;
+    border: 1px solid white;
+  }
+
+  .user-board-add:hover svg{
+    stroke: white;
+  }
+
   .user-board:hover {
-    border: 1px solid red;
+    border: 1px solid white;
   }
 
   .user-board-name{
-    padding: 10px 5px;
+    padding: 15px 10px;
     text-align: center;
+    font-size: 18px;
   }
 
   .board-control-item{
@@ -170,6 +206,6 @@ export default {
   }
 
   .board-control-item:hover svg {
-    fill: red;
+    fill: white;
   }
 </style>

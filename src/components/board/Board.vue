@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      cardCategories: ['ToDo', 'Doing', 'Done']
+      cardCategories: ['To Do', 'In Progress', 'Done']
     }
   },
   created(){

@@ -6,13 +6,13 @@
       </div>
       <div class="add-item-cancel" @click="$emit('close')">
         <svg xmlns="http://www.w3.org/2000/svg">
-          <line x1="5" y1="5" x2="35" y2="35"  stroke-width="3"/>
-          <line x1="5" y1="35" x2="35" y2="5"  stroke-width="3"/>
+          <line x1="10" y1="10" x2="30" y2="30"  stroke-width="2"/>
+          <line x1="10" y1="30" x2="30" y2="10"  stroke-width="2"/>
         </svg>
       </div>
     </div>
     <div class="line"></div>
-    <input type="text" v-model="textData">
+    <input type="text" v-model="textData" :placeholder="displayedPlaceholder">
     <button @click="transferDataToParentComponent(); $emit('close') ">Add</button>
   </div>
 </template>
@@ -21,7 +21,8 @@
 export default {
   name: "AddItem",
   props: {
-    displayedTitle: String
+    displayedTitle: String,
+    displayedPlaceholder: String
   },
   data(){
     return{
@@ -39,7 +40,9 @@ export default {
 <style scoped>
   .add-item{
     position: absolute;
-    alignment: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50% , -50%);
     z-index: 50;
     color: #5B5B5B;
     width: 350px;
@@ -82,7 +85,7 @@ export default {
   }
 
   .add-item-cancel:hover svg{
-    stroke: red;
+    stroke: #00aaee;
   }
 
   .line{

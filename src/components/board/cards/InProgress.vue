@@ -92,12 +92,6 @@ export default {
   height: 100%;
 }
 
-.add-new-card:hover svg {
-  stroke: red;
-  transform: rotate(180deg);
-  transition: .5s;
-}
-
 .task-card-control {
   display: flex;
   flex-wrap: nowrap;
@@ -121,7 +115,7 @@ export default {
 }
 
 .task-card-control-item:hover svg {
-  fill: red;
+  fill: #00aaee;
 }
 
 .task-cards-list {
@@ -131,6 +125,7 @@ export default {
 }
 
 .card {
+  padding: 10px;
   background: var(--default-background-card-color);
   min-height: 50px;
   width: var(--default-card-width);

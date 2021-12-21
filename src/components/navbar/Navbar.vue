@@ -22,8 +22,9 @@
           <path d="M320,384v16a64,64,0,0,1-128,0V384" class="svg-default"/>
         </svg>
       </div>
-      <div class="navbar-icon-holder current-profile-holder">
+      <div class="navbar-icon-holder current-profile-holder" @click="isProfileDropdown = !isProfileDropdown">
         <img src="../../../resources/img/render/logo.png" alt=""/>
+        <ProfileDropdown v-if="isProfileDropdown"/>
       </div>
     </div>
     <div class="navbar-elements-holder" v-if="!isSignedIn">
@@ -41,14 +42,22 @@
 
 <script>
 import {mapState, mapMutations} from "vuex";
-
+import ProfileDropdown from "./../dropdown/ProfileDropdown.vue"
 export default {
   name: "Navbar",
+  data(){
+    return{
+      isProfileDropdown: false
+    }
+  },
   computed: {
     ...mapState(['isSignedIn'])
   },
   methods: {
     ...mapMutations(['setCurrentHomeComponent'])
+  },
+  components: {
+    ProfileDropdown
   }
 }
 </script>
@@ -154,6 +163,7 @@ export default {
 }
 
 .current-profile-holder {
+  position: relative;
   margin-right: 60px;
   width: 50px;
 }
