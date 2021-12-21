@@ -10,6 +10,7 @@ const jsonResponse = (response) => {
 const store = new Vuex.Store({
     state: {
         backendPort: 4001,
+        domainName: 'http://localhost:',
         isSignedIn: false,
 
         globalCardIdRegistry: -1,
@@ -124,7 +125,7 @@ const store = new Vuex.Store({
         createCard(card) {
             const cardToSend = Object.assign({}, card);
 
-            fetch('http://localhost:' + this.state.backendPort + '/api/cards', {
+            fetch(this.state.domainName + this.state.backendPort + '/api/cards', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -139,7 +140,7 @@ const store = new Vuex.Store({
                 .catch(console.error);
         },
         deleteCard(id) {
-            fetch('http://localhost:' + this.state.backendPort + '/api/cards', {
+            fetch(this.state.domainName + this.state.backendPort + '/api/cards', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'
@@ -155,7 +156,7 @@ const store = new Vuex.Store({
         },
         changeCardList(card, list) {
             card.list = list;
-            fetch('http://localhost:' + this.state.backendPort + '/api/card/change-list', {
+            fetch(this.state.domainName + this.state.backendPort + '/api/card/change-list', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -170,7 +171,7 @@ const store = new Vuex.Store({
                 .catch(console.error);
         },
         loadAllCards(boardId) { //TODO update method with board id
-            fetch('http://localhost:' + this.state.backendPort + '/api/cards')
+            fetch(this.state.domainName + this.state.backendPort + '/api/cards')
                 .then(jsonResponse)
                 .then(result => {
                     Array.from(result).forEach(card => {
@@ -206,28 +207,48 @@ const store = new Vuex.Store({
 
         },
         /*auth*/
-        signIn(credentials) {
-            /*TODO sign in
-            * credentials: {
-            *   login: 'some login',
-            *   password 'some password'
-            * }
-            * */
-            /*TODO update store.currentUser on sign in */
-            this.state.isSignedIn = true;
-            this.state.currentUser.username = 'test';
-            this.state.currentUser.email = 'test@mail.com';
-            this.state.currentHomeComponent = 'Boards';
+        signIn(state, credentials) {
+            fetch(this.state.domainName + this.state.backendPort + '/api/user/signin', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(credentials)
+            })
+                .then(jsonResponse)
+                .then(user => {
+                    if (user) {
+                        this.state.isSignedIn = true;
+                        this.state.currentUser.username = user.login;
+                        this.state.currentUser.email = user.email;
+                        this.state.currentHomeComponent = 'Boards';
+
+                        console.log("User loaded");
+                    }
+                });
         },
-        signUp(credentials) {
-            /*TODO sign up
-            * credentials: {
-            *   login: '',
-            *   email: '',
-            *   password: '',
-            *   rpassword: ''
-            * }
-            * */
+        signUp(state, credentials) {
+            if (credentials.login || credentials.password) {
+                fetch(this.state.domainName + this.state.backendPort + '/api/user/signup', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                })
+                    .then(jsonResponse)
+                    .then(user => {
+                        if (user) {
+                            location.reload();
+                        } else {
+                            alert('ERROR');
+                        }
+                    });
+            } else {
+                alert("Please, input username and password");
+            }
+
+            console.log(credentials);
         }
     }
 });

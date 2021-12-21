@@ -5,7 +5,6 @@
         Sign Up
       </div>
       <div class="line"></div>
-      <form action="">
         <input type="text" placeholder="Username" v-model="credentials.login">
         <input type="text" placeholder="E-mail" v-model="credentials.email">
         <input type="password" placeholder="Password" v-model="credentials.password">
@@ -13,7 +12,6 @@
         <button @click="signUp(credentials)">
           Sign Up
         </button>
-      </form>
       <div class="line"></div>
     </div>
   </div>
