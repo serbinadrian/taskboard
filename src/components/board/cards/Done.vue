@@ -47,7 +47,11 @@ export default {
     ...mapMutations(['incrementGlobalCardId', 'ejectDoneCardById', 'addInProgressCard']),
     transferCardToInProgress(id) {
       this.ejectDoneCardById(id);
-      this.changeCardList(this.lastCard, 1); //to server
+
+      //It works correct only like this. Please, don't touch it
+      this.lastCard.list = 1;
+
+      this.changeCardList(this.lastCard); //to server
       this.addInProgressCard(this.lastCard);
     }
   },

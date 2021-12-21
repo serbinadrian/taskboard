@@ -53,12 +53,20 @@ export default {
     ...mapMutations(['addToDoCard', 'incrementGlobalCardId', 'ejectInProgressCardById', 'addDoneCard']),
     transferCardToToDo(id){
       this.ejectInProgressCardById(id);
-      this.changeCardList(this.lastCard, 0); //to server
+
+      //It works correct only like this. Please, don't touch it
+      this.lastCard.list = 0;
+
+      this.changeCardList(this.lastCard); //to server
       this.addToDoCard(this.lastCard);
     },
     transferCardToDone(id){
       this.ejectInProgressCardById(id);
-      this.changeCardList(this.lastCard, 2); //to server
+
+      //It works correct only like this. Please, don't touch it
+      this.lastCard.list = 2;
+
+      this.changeCardList(this.lastCard); //to server
       this.addDoneCard(this.lastCard);
     },
   },

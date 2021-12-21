@@ -13,7 +13,7 @@ const store = new Vuex.Store({
         domainName: 'http://localhost:',
         isSignedIn: false,
 
-        globalCardIdRegistry: -1,
+        globalCardIdRegistry: 0,
         globalBoardIdRegistry: -1,
 
         currentHomeComponent: 'SignIn',
@@ -64,6 +64,10 @@ const store = new Vuex.Store({
             for (let i = 0; i < state.boards.length; i++) {
                 if (state.boards[i].id === id) {
                     state.currentBoard = Object.assign({}, state.boards[i]);
+                    state.toDoCards = [];
+                    state.inProgressCards = [];
+                    state.doneCards = [];
+
                     break;
                 }
             }
@@ -122,7 +126,7 @@ const store = new Vuex.Store({
         }
     },
     actions: {
-        createCard(card) {
+        createCard(state, card) {
             const cardToSend = Object.assign({}, card);
 
             fetch(this.state.domainName + this.state.backendPort + '/api/cards', {
@@ -130,7 +134,7 @@ const store = new Vuex.Store({
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(cardToSend)
+                body: JSON.stringify({card: cardToSend, board: this.state.currentBoard})
             })
                 .then(jsonResponse)
                 .then(result => {
@@ -139,13 +143,13 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        deleteCard(id) {
+        deleteCard(state, id) {
             fetch(this.state.domainName + this.state.backendPort + '/api/cards', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({id: id})
+                body: JSON.stringify({cardId: id, board: this.state.currentBoard})
             })
                 .then(jsonResponse)
                 .then(result => {
@@ -154,14 +158,13 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        changeCardList(card, list) {
-            card.list = list;
+        changeCardList(state, card) {
             fetch(this.state.domainName + this.state.backendPort + '/api/card/change-list', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(card)
+                body: JSON.stringify({card: card, board: this.state.currentBoard})
             })
                 .then(jsonResponse)
                 .then(result => {
@@ -170,8 +173,8 @@ const store = new Vuex.Store({
                 })
                 .catch(console.error);
         },
-        loadAllCards(boardId) { //TODO update method with board id
-            fetch(this.state.domainName + this.state.backendPort + '/api/cards')
+        loadAllCards(state) {
+            fetch(this.state.domainName + this.state.backendPort + '/api/cards?id=' + this.state.currentBoard.id + '&owner=' + this.state.currentBoard.owner)
                 .then(jsonResponse)
                 .then(result => {
                     Array.from(result).forEach(card => {
@@ -188,6 +191,9 @@ const store = new Vuex.Store({
                                 this.state.doneCards.push(card);
                                 break;
                             }
+                            default: {
+                                this.state.toDoCards.push(card);
+                            }
                         }
                         if (card.id > this.state.globalCardIdRegistry) this.state.globalCardIdRegistry = card.id;
                     });
@@ -197,14 +203,39 @@ const store = new Vuex.Store({
                 .catch(console.error)
         },
         /*boards*/
-        loadBoards(state){
-            //use this.state.currentUser.id to load
+        createBoard(state, board) {
+            fetch(this.state.domainName + this.state.backendPort + '/api/boards', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(board)
+            })
+                .then(jsonResponse)
+                .then(board => {
+                    if (board) {
+                        console.log(board);
+                        console.log("Board created");
+                    }
+                })
+                .catch(console.error);
         },
-        createBoard(board) {
-
-        },
-        deleteBoard(id) {
-
+        deleteBoard(state, board) {
+            fetch(this.state.domainName + this.state.backendPort + '/api/boards', {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(board)
+            })
+                .then(jsonResponse)
+                .then(response => {
+                    if (response) {
+                        console.log(response);
+                        console.log("Board deleted");
+                    }
+                })
+                .catch(console.error);
         },
         /*auth*/
         signIn(state, credentials) {
@@ -223,9 +254,14 @@ const store = new Vuex.Store({
                         this.state.currentUser.email = user.email;
                         this.state.currentHomeComponent = 'Boards';
 
+                        if (user.boards) {
+                            this.state.boards = user.boards;
+                        }
+
                         console.log("User loaded");
                     }
-                });
+                })
+                .catch(console.error);
         },
         signUp(state, credentials) {
             if (credentials.login || credentials.password) {
